@@ -3,8 +3,6 @@ const { constants } = require("../constants");
 // Make sure the parameters are in this order only otherwise it will give us an error
 const errorHandler = (err,req,res,next) => {
     const statusCode = res.statusCode ? res.statusCode : 500;
-    res.json({message : err.message, stackTrace : err.stack});
-
     switch (statusCode) {
         case constants.VALIDATION_ERROR:
             res.json({title : "Validation Error",message : err.message, stackTrace : err.stack});            

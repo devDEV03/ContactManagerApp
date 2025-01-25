@@ -1,5 +1,6 @@
 const express = require("express");
 const { getAllContacts,createContact, getContactByID, deleteContact, updatingContact } = require("../Controller/contactController");
+const validateToken = require("../Middleware/validateToken");
 const router = express.Router();
 
 // One way to Write
@@ -13,6 +14,7 @@ const router = express.Router();
 
 // router.route("/:id").put(updatingContact)
 
+router.use(validateToken);
 router.route("/").get(getAllContacts).post(createContact)
 router.route("/:id").get(getContactByID).put(updatingContact).delete(deleteContact);
 
