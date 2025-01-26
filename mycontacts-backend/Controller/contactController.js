@@ -4,9 +4,9 @@ const Contact = require("../Models/contactModel");
 
 // @desc Get All Contacts
 // @route GET /api/contacts
-// @access public
+// @access private
 const getAllContacts = asyncHandler(async (req, res) => {
-    const contacts = await Contact.find();
+    const contacts = await Contact.find({user_id : req.user.id});
   res.status(200).json({ contacts : contacts,message: "Getting All the Contacts" });
 });
 
@@ -15,10 +15,13 @@ const getAllContacts = asyncHandler(async (req, res) => {
 // @access public
 const getContactByID = asyncHandler(async (req, res) => {
   const contact = await Contact.findById(req.params.id);
-
   if(!contact){
     res.status(404);
     throw new Error("Contact not found");
+  }
+  if(contact.user_id.toString() !== req.user.id){
+    res.status(403);
+    throw new Error("Not authroized to access this contact");
   }
   res.status(200).json({ contact,message: `Getting Contact with ID : ${req.params.id}` });
 });
@@ -35,6 +38,7 @@ const createContact = asyncHandler(async (req, res) => {
 
 //   In the ES6, if the key and value have the same name we can just use one and put a comma
   const contact = await Contact.create({
+    user_id : req.user.id,
     name,
     email,
     phone
@@ -52,6 +56,11 @@ const updatingContact = asyncHandler(async (req, res) => {
     if(!contact){
       res.status(404);
       throw new Error("Contact not found");
+    }
+
+    if(contact.user_id.toString() !== req.user.id){
+      res.status(403);
+      throw new Error("Not authroized to access this contact");
     }
 
     const updatedContact = await Contact.findByIdAndUpdate(
@@ -73,7 +82,13 @@ const deleteContact = asyncHandler(async (req, res) => {
       res.status(404);
       throw new Error("Contact not found");
     }
-  await Contact.remove();
+
+    if(contact.user_id.toString() !== req.user.id){
+      res.status(403);
+      throw new Error("Not authroized to access this contact");
+    }
+
+  await Contact.deleteOne({_id : req.params.id});
 
   res.status(200).json({ deletedContact : contact, message: `Deleting Contact with ID : ${req.params.id}` });
 });

@@ -58,7 +58,8 @@ const loginUser = asyncHandler(async (req,res) => {
         const accesstoken = jwt.sign({
             user : {
                 username : user.username,
-                email : user.email
+                email : user.email,
+                id : user.id
             }
         },process.env.ACCESS_TOKEN_SECRET,
         {
@@ -73,7 +74,7 @@ const loginUser = asyncHandler(async (req,res) => {
 
 // @desc Current User Info
 // @route GET /api/contacts/current
-// @access public
+// @access private
 const currentUser = asyncHandler(async (req,res) => {
     
     res.json(req.user);
