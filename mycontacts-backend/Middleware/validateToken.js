@@ -1,6 +1,10 @@
 const asyncHandler = require("express-async-handler");
 const jwt = require("jsonwebtoken");
+const { notify } = require("../Routes/contactRoutes");
 
+
+// When we get the authentication token in authorization header we take it , split it and verify it whether it is right or not
+// then we decode it and send it as part of the request and use the next() function which passes it to the following function
 const validateToken = asyncHandler(async (req,res,next) => {
     let token;
     const authorizationToken = req.headers.authorization || req.headers.Authorization;
